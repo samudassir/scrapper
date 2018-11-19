@@ -39,8 +39,7 @@ public class Scrapper {
 	final static String FILE_HEADER = "postedDate,message,profile,userId";
 	static FileWriter fileWriter = null;
 
-	
-	//static KafkaProducerPool scrapperPool = new KafkaProducerPool();
+
 	public static void main(String[] args) {
 		try {
 		fileWriter = new FileWriter(fileName);
@@ -53,48 +52,6 @@ public class Scrapper {
 		scrapeCancerForum("realTime");
 	}
 	
-	private static ZonedDateTime calculateLocalDateTime(String dateTime) {
-		System.out.println(dateTime+"   <<<<<<<<<<<<<<<<<<<<<<  dateTime");
-		LocalDateTime localDateTime =null;
-		LocalDate localDate = null;
-		String dateTimeArr[] = dateTime.split(",");
-		String date = dateTimeArr[0];
-		int month = 0;
-		int day = 0;
-		int year = 0;
-		if("Today".equals(date)) {
-			localDate = LocalDate.now()	;
-			month = localDate.getMonthValue();
-			day = localDate.getDayOfMonth();
-			year = localDate.getYear();
-		}else if("Yesterday".equals(date)) {
-			localDate = LocalDate.now().minusDays(1)	;
-			month = localDate.getMonthValue();
-			day = localDate.getDayOfMonth();
-			year = localDate.getYear();
-		}else {
-		String dateArr[] = date.split("-");
-		month = Integer.parseInt(dateArr[0]);
-		day = Integer.parseInt(dateArr[1]);
-		year = Integer.parseInt(dateArr[2]);
-		}
-		String time = dateTimeArr[1];
-		
-		if(time.contains("PM")) {
-			String timeArr[] = time.split(":");
-			int hr = Integer.parseInt(timeArr[0].trim())+11;
-			int min = Integer.parseInt(timeArr[1].substring(0, 2));
-			localDateTime = LocalDateTime.of(year, month, day, hr, min);
-		}else {
-			String timeArr[] = time.split(":");
-			int hr = Integer.parseInt(timeArr[0].trim());
-			int min = Integer.parseInt(timeArr[1].substring(0, 2));
-			localDateTime = LocalDateTime.of(year, month, day, hr, min);
-		}
-		ZoneId zoneId = ZoneId.of("America/Los_Angeles");
-		return localDateTime.atZone(zoneId);
-	}
-
 	public static void scrapeCancerForum(String job) {
 		String baseUrl = "https://www.cancerforums.net/";
 
@@ -102,15 +59,13 @@ public class Scrapper {
 
 		client.getOptions().setCssEnabled(false);
 		client.getOptions().setJavaScriptEnabled(false);
-		try {
-			HtmlPage page = getHtmlPageContent(client, baseUrl);
-			buildMessage(job, baseUrl, client, retrieveSecondPageURLs(baseUrl, client, retrieveLandingPageURLs(page)));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+			try {
+				HtmlPage page = getHtmlPageContent(client, baseUrl);
+				buildMessage(job, baseUrl, client, retrieveSecondPageURLs(baseUrl, client, retrieveLandingPageURLs(page)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
-
 	private static List<String> retrieveLandingPageURLs(HtmlPage page) {
 		List<String> landingPageURLs = new ArrayList<String>();
 		List<HtmlElement> topElement = getHtmlElement(page, xpath1);
@@ -208,6 +163,49 @@ public class Scrapper {
 			e.printStackTrace();
 		}
 	}
+
+	private static ZonedDateTime calculateLocalDateTime(String dateTime) {
+		System.out.println(dateTime+"   <<<<<<<<<<<<<<<<<<<<<<  dateTime");
+		LocalDateTime localDateTime =null;
+		LocalDate localDate = null;
+		String dateTimeArr[] = dateTime.split(",");
+		String date = dateTimeArr[0];
+		int month = 0;
+		int day = 0;
+		int year = 0;
+		if("Today".equals(date)) {
+			localDate = LocalDate.now()	;
+			month = localDate.getMonthValue();
+			day = localDate.getDayOfMonth();
+			year = localDate.getYear();
+		}else if("Yesterday".equals(date)) {
+			localDate = LocalDate.now().minusDays(1)	;
+			month = localDate.getMonthValue();
+			day = localDate.getDayOfMonth();
+			year = localDate.getYear();
+		}else {
+		String dateArr[] = date.split("-");
+		month = Integer.parseInt(dateArr[0]);
+		day = Integer.parseInt(dateArr[1]);
+		year = Integer.parseInt(dateArr[2]);
+		}
+		String time = dateTimeArr[1];
+		
+		if(time.contains("PM")) {
+			String timeArr[] = time.split(":");
+			int hr = Integer.parseInt(timeArr[0].trim())+11;
+			int min = Integer.parseInt(timeArr[1].substring(0, 2));
+			localDateTime = LocalDateTime.of(year, month, day, hr, min);
+		}else {
+			String timeArr[] = time.split(":");
+			int hr = Integer.parseInt(timeArr[0].trim());
+			int min = Integer.parseInt(timeArr[1].substring(0, 2));
+			localDateTime = LocalDateTime.of(year, month, day, hr, min);
+		}
+		ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+		return localDateTime.atZone(zoneId);
+	}
+
 
 	private static HtmlPage getHtmlPageContent(WebClient client, String url) throws IOException, MalformedURLException {
 		HtmlPage contentPage = client.getPage(url);
