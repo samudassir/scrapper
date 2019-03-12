@@ -15,7 +15,7 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - ${aws ecr get-login}
+      - $(aws ecr get-login)
     finally:
       - echo This always runs even if the login command fails 
   build:
