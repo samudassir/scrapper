@@ -15,7 +15,7 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - docker login -u="syedm+hogwarts" -p="GPQAXSVAY7GGZY1G9V1SBBWBJI6E392Q611WSK1342VT0P0WRPT0ZDXRPZ234QKA" container-registry.autodesk.com
+      - ${aws ecr get-login}
     finally:
       - echo This always runs even if the login command fails 
   build:
@@ -23,11 +23,13 @@ phases:
       - echo Entered the build phase...
       - echo Build started on `date`
       - mvn install
+      - docker build --t "${REPOSITORY}:${TAG}"
       - docker push container-registry.autodesk.com/syedm/myfirstrepo:myfirstrepo
     finally:
       - echo This always runs even if the install command fails
   post_build:
     commands:
+      - docker push "${REPOSITORY}:${TAG}"
       - echo Entered the post_build phase...
       - echo Build completed on `date`
 artifacts:
