@@ -7,7 +7,7 @@ env:
 phases:
   install:
     commands:
-      - cd /usr/lib/jvm/
+      - cd /usr/lib/
       - ls -ltr
       - echo Entered the install phase...
       - apt-get update -y
