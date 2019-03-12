@@ -21,6 +21,7 @@ phases:
     commands:
       - echo Entered the pre_build phase...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
     finally:
       - echo This always runs even if the login command fails 
   build:
