@@ -22,6 +22,8 @@ phases:
       - echo Entered the build phase...
       - echo Build started on `date`
       - mvn install
+      - docker login -u="syedm+hogwarts" -p="GPQAXSVAY7GGZY1G9V1SBBWBJI6E392Q611WSK1342VT0P0WRPT0ZDXRPZ234QKA" container-registry.autodesk.com
+      - docker push container-registry.autodesk.com/syedm/myfirstrepo:myfirstrepo
     finally:
       - echo This always runs even if the install command fails
   post_build:
@@ -36,10 +38,6 @@ artifacts:
     artifact1:
       files:
         - target/scrapper-app-1.0-SNAPSHOT.jar
-      discard-paths: yes
-    artifact2:
-      files:
-        - target/messageUtil-1.0.jar
       discard-paths: yes
 cache:
   paths:
