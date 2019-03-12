@@ -24,7 +24,6 @@ phases:
       - echo Build started on `date`
       - mvn install
       - docker build --t "${REPOSITORY}:${TAG}"
-      - docker push "${REPOSITORY}:${TAG}"
     finally:
       - echo This always runs even if the install command fails
   post_build:
