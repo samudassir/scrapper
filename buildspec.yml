@@ -22,8 +22,8 @@ phases:
     commands:
       - echo Entered the build phase...
       - echo Build started on `date`
-      - mvn install
-      - docker build --t "${REPOSITORY}:${TAG}"
+      - mvn clean package -Dmaven.test.skip=true
+      - mvn dockerfile:build
     finally:
       - echo This always runs even if the install command fails
   post_build:
